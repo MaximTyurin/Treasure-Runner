@@ -25,6 +25,10 @@ public class Enemy : MonoBehaviour
 
     private float _gravityOnGround = 1f;
     private float _gravityInFalling = 10f;
+    private string _animIsAttaking = "isAttacking";
+    private string _animIsRunning = "isRunning";
+    private string _topLadderTag = "TopLadder";
+    private string _botLadderTag = "BotLadder";
 
     private void Start()
     {
@@ -41,7 +45,7 @@ public class Enemy : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out Player player))
         {
-            _animator.SetTrigger("isAttacking");
+            _animator.SetTrigger(_animIsAttaking);
             _sceneController.Restartlevel();
         }
     }
@@ -93,12 +97,12 @@ public class Enemy : MonoBehaviour
             }
         }
         float ladderCorrectoin = 0.2f;
-        if (collision.gameObject.CompareTag("TopLadder") && transform.position.y < collision.gameObject.transform.position.y - ladderCorrectoin)
+        if (collision.gameObject.CompareTag(_topLadderTag) && transform.position.y < collision.gameObject.transform.position.y - ladderCorrectoin)
         {
             transform.position = collision.gameObject.transform.position;
         }
 
-        if (collision.gameObject.CompareTag("BotLadder") && transform.position.y > collision.gameObject.transform.position.y + ladderCorrectoin)
+        if (collision.gameObject.CompareTag(_botLadderTag) && transform.position.y > collision.gameObject.transform.position.y + ladderCorrectoin)
         {
             transform.position = collision.gameObject.transform.position;
         }
@@ -148,14 +152,14 @@ public class Enemy : MonoBehaviour
             Rb.gravityScale = _gravityInFalling;
             Rb.velocity = Vector2.zero;
             SAP2DAgent.CanMove = false;
-            _animator.SetBool("isRunning", false);
+            _animator.SetBool(_animIsRunning, false);
         }
 
         if (IsGrounded || IsClimbingOnLadder || IsClimbingOnRope)
         {
             SAP2DAgent.CanMove = true;
             SAP2DAgent.enabled = true;
-            _animator.SetBool("isRunning", true);
+            _animator.SetBool(_animIsRunning, true);
         }
     }
 }

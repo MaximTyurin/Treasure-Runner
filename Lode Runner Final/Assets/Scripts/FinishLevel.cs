@@ -15,7 +15,6 @@ public class FinishLevel : MonoBehaviour
         }
         else if(SceneManager.GetActiveScene().buildIndex == _lastSceneIndex)
         {
-            Debug.Log($"Game Over {_lastSceneIndex}");
             _sceneController.StartCoroutine(_sceneController.Win());
         }
     }

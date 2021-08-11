@@ -189,9 +189,6 @@ namespace SAP2D {
 
             if (horizontalHit.collider != null)
             {
-                Debug.Log(horizontalHit.collider.name);
-                Debug.DrawRay(checkEnemy.transform.position, directionRay, Color.red, rayDist);
-
                 if (horizontalHit.collider.name == "Enemy" || horizontalHit.collider.name == "Enemy(Clone)")
                 {
                     

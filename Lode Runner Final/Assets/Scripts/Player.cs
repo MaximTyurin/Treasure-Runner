@@ -30,6 +30,10 @@ public class Player : MonoBehaviour
     private int _totalTreasures;
     private float _gravityInFalling = 20f;
     private float _gravityOnGround = 1f;
+    private string _animIsAttaking = "isAttaking";
+    private string _animIsRunning = "isRunning";
+    private string _animIsClimbing = "isClimbing";
+    private string _animIsClimbIdle = "isClimbIdle";
     private bool _canMove;
     private bool _canDestroy;
     private bool _checkNextPit;
@@ -42,13 +46,13 @@ public class Player : MonoBehaviour
         if (direction > 0 && _canDestroy)
         {
             transform.localRotation = Quaternion.Euler(0, 0, 0);
-            _animator.SetTrigger("isAttaking");
+            _animator.SetTrigger(_animIsAttaking);
             StartCoroutine(CooldownMoveAndDestroy());
         }
         else if (direction < 0 && _canDestroy)
         {
             transform.localRotation = Quaternion.Euler(0, 180, 0);
-            _animator.SetTrigger("isAttaking");
+            _animator.SetTrigger(_animIsAttaking);
             StartCoroutine(CooldownMoveAndDestroy());
         }
     }
@@ -57,8 +61,8 @@ public class Player : MonoBehaviour
     {
         if (moveInput.x != 0 && IsClimbingOnRope == false)
         {
-            _animator.SetBool("isRunning", true);
-            _animator.SetBool("isClimbing", false);
+            _animator.SetBool(_animIsRunning, true);
+            _animator.SetBool(_animIsClimbing, false);
             if (moveInput.x < 0)
                 transform.localRotation = Quaternion.Euler(0, 180, 0);
             if (moveInput.x > 0)
@@ -66,8 +70,8 @@ public class Player : MonoBehaviour
         }
         else if (moveInput.x != 0 && IsClimbingOnRope)
         {
-            _animator.SetBool("isClimbing", true);
-            _animator.SetBool("isClimbIdle", false);
+            _animator.SetBool(_animIsClimbing, true);
+            _animator.SetBool(_animIsClimbIdle, false);
             if (moveInput.x < 0)
                 transform.localRotation = Quaternion.Euler(0, 180, 0);
             if (moveInput.x > 0)
@@ -75,14 +79,14 @@ public class Player : MonoBehaviour
         }
         else if (moveInput.x == 0 && IsClimbingOnRope)
         {
-            _animator.SetBool("isClimbIdle", true);
-            _animator.SetBool("isClimbing", true);
+            _animator.SetBool(_animIsClimbIdle, true);
+            _animator.SetBool(_animIsClimbing, true);
         }
         else
         {
-            _animator.SetBool("isRunning", false);
-            _animator.SetBool("isClimbing", false);
-            _animator.SetBool("isClimbIdle", false);
+            _animator.SetBool(_animIsRunning, false);
+            _animator.SetBool(_animIsClimbing, false);
+            _animator.SetBool(_animIsClimbIdle, false);
         }
 
         if (moveInput.y == 0 && IsClimbingOnLadder == false)
@@ -94,7 +98,7 @@ public class Player : MonoBehaviour
 
         if (moveInput.y == -1 && IsClimbingOnRope)
         {
-            _animator.SetBool("isClimbIdle", false);
+            _animator.SetBool(_animIsClimbIdle, false);
             IsClimbingOnRope = false;
             IsFalling = true;
         }
@@ -208,13 +212,13 @@ public class Player : MonoBehaviour
     {
         bool value = false;
         float castDist = _lengthRay;
+        string enemy = "Enemy";
+        string enemyClone = "Enemy(Clone)";
 
         RaycastHit2D rightHit = Physics2D.Raycast(_rightRay.position, Vector2.down, castDist, _ropeMask);
         if(rightHit.collider != null)
         {
-            Debug.Log(rightHit.collider.name);
-            Debug.DrawRay(_rightRay.position, Vector2.down, Color.red, castDist);
-            if (rightHit.collider.name == "Enemy" || rightHit.collider.name == "Enemy(Clone)")
+            if (rightHit.collider.name == enemy || rightHit.collider.name == enemyClone)
             {
                 value = true;
             }
@@ -228,14 +232,12 @@ public class Player : MonoBehaviour
     private bool CheckPitAfterGoingOnHeadEnemy()
     {
         bool value = false;
+        string centerClone = "Center(Clone)";
         float castDist = _lengthRay;
         RaycastHit2D checkHit = Physics2D.Raycast(transform.position, Vector2.down, castDist, _maskCenterOfPit);
         if (checkHit.collider != null)
         {
-            Debug.Log(checkHit.collider.name);
-            Debug.DrawRay(transform.position, Vector2.down, Color.red, castDist);
-
-            if (checkHit.collider.name == "Center(Clone)")
+            if (checkHit.collider.name == centerClone)
             {
                 value = true;
             }
@@ -249,7 +251,7 @@ public class Player : MonoBehaviour
     private IEnumerator CooldownMoveAndDestroy()
     {
         Rb.velocity = Vector2.zero;
-        _animator.SetBool("isRunning", false);
+        _animator.SetBool(_animIsRunning, false);
         _canMove = false;
         _canDestroy = false;
         yield return new WaitForSeconds(_coolDown);

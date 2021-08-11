@@ -38,7 +38,8 @@ public class GridManager : MonoBehaviour
 
     public void DestroyFakeBrick(GameObject fakeBrick)
     {
-        Destroy(fakeBrick, 2.5f);
+        float delayDestroy = 2.5f;
+        Destroy(fakeBrick, delayDestroy);
     }
 
     private void Awake()

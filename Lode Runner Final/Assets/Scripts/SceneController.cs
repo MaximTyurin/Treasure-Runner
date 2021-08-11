@@ -12,11 +12,15 @@ public class SceneController : MonoBehaviour
 
     private AudioSource _audioSource;
 
+    private string _prefsKeyLvl = "Lvl";
+    private float _delayTimeLoadScene = 2f;
+    private float _delayTimeDeactivation = 0.5f;
+
     public void LoadLastSaveScene()
     {
-        if(PlayerPrefs.HasKey("Lvl"))
+        if(PlayerPrefs.HasKey(_prefsKeyLvl))
         {
-            SceneManager.LoadScene(PlayerPrefs.GetInt("Lvl") + 1);
+            SceneManager.LoadScene(PlayerPrefs.GetInt(_prefsKeyLvl) + 1);
         }
     }
 
@@ -27,10 +31,9 @@ public class SceneController : MonoBehaviour
 
     public void LoadNextlevel()
     {
-        if (PlayerPrefs.HasKey("Lvl") == false || PlayerPrefs.GetInt("Lvl") < SceneManager.GetActiveScene().buildIndex)
+        if (PlayerPrefs.HasKey(_prefsKeyLvl) == false || PlayerPrefs.GetInt(_prefsKeyLvl) < SceneManager.GetActiveScene().buildIndex)
         {
-            PlayerPrefs.SetInt("Lvl", SceneManager.GetActiveScene().buildIndex);
-            Debug.Log(PlayerPrefs.GetInt("Lvl"));
+            PlayerPrefs.SetInt(_prefsKeyLvl, SceneManager.GetActiveScene().buildIndex);
         }
 
         StartCoroutine(LoadLvl());
@@ -55,7 +58,7 @@ public class SceneController : MonoBehaviour
     public IEnumerator Win()
     {
         _winScreen.SetActive(true);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(_delayTimeLoadScene);
         LoadMainMenu();
     }
 
@@ -69,9 +72,9 @@ public class SceneController : MonoBehaviour
         _audioSource.enabled = false;
         _nextScenePanel.SetActive(true);
         _nextLvlText.text = $"Level {SceneManager.GetActiveScene().buildIndex + 1}";
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(_delayTimeLoadScene);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(_delayTimeDeactivation);
         _nextScenePanel.SetActive(false);
     }
 
@@ -79,9 +82,9 @@ public class SceneController : MonoBehaviour
     {
         _audioSource.enabled = false;
         _deathScreen.SetActive(true);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(_delayTimeLoadScene);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(_delayTimeDeactivation);
         _deathScreen.SetActive(false);
     }
 }
